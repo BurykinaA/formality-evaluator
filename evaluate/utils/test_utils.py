@@ -69,6 +69,7 @@ def evaluate_similarity(embeddings1, embeddings2, labels, threshold=0.5):
     similarities = np.sum(norm_emb1 * norm_emb2, axis=1)
     
     binary_preds = (similarities >= threshold).astype(int)
+    #print(binary_preds)
     
     metrics = evaluate_binary_classification(similarities, labels, threshold)
     

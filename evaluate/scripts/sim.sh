@@ -1,15 +1,13 @@
 # Choose one of the following models:
-# [distilbertbase,
-# dunzhang/stella_en_400M_v5, 
-# jinaai/jina-embeddings-v3, 
-# Alibaba-NLP/gte-large-en-v1.5, 
-# jxm/cde-small-v1, 
-# HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1]
+# [distilbert-base-uncased,
+# dunzhang/stella_en_400M_v5, +
+# Alibaba-NLP/gte-large-en-v1.5, +
+# HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1] +
 
 # Choose one of the following datasets:
 # [gyafc, wikipedia_reddit, openai]
 
-MODEL_NAME="dunzhang/stella_en_400M_v5" 
+MODEL_NAME="distilbert-base-uncased" 
 DATA_PATH="data/gyafc.txt"  # Change to your data file
 OUTPUT_DIR="results/similarity"  # Change to your output directory
 

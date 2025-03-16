@@ -63,11 +63,16 @@ def calculate_embedding(texts, model, tokenizer, device='cuda', batch_size=32, m
             attention_mask = inputs['attention_mask'].to(device)
             
             outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            # print('outputs', outputs)
             
-            if hasattr(outputs, 'pooler_output'):
+            if hasattr(outputs, 'pooler_output') and outputs.pooler_output is not None:
                 embeddings = outputs.pooler_output
             else:
-                embeddings = outputs.last_hidden_state[:, 0, :]
+                #embeddings = outputs.last_hidden_state[:, 0, :]
+                embeddings = (outputs.last_hidden_state * attention_mask.unsqueeze(-1)).sum(1) / attention_mask.sum(1, keepdim=True)
+
+
+            # print(embeddings)
             
             all_embeddings.append(embeddings.cpu().numpy())
     
@@ -100,7 +105,7 @@ if __name__ == "__main__":
     texts = [t.split('\t')[-1] for t in texts]
 
 
-    device = "cuda" 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer = AutoTokenizer.from_pretrained(args.model_dir, use_fast=True)
     model = AutoModel.from_pretrained(args.model_dir)
 

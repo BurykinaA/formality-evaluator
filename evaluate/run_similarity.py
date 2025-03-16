@@ -23,8 +23,8 @@ def load_similarity_data(data_path):
         for line in f:
             parts = line.strip().split("\t")
             if len(parts) >= 2:
-                text1_list.append(parts[0])
-                text2_list.append('This text is written in a formal tone.')
+                text1_list.append('Response: '+parts[0])
+                text2_list.append('Query: Is this text written in a formal tone?')
                 labels.append(int(parts[1]))
     
     return text1_list, text2_list, np.array(labels)
@@ -68,9 +68,13 @@ def main():
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size for embedding calculation")
     
     args = parser.parse_args()
+
+    model_name_clean = os.path.basename(args.model_name)
+    dataset_name_clean = os.path.splitext(os.path.basename(args.data_path))[0]
+    output_dir = os.path.join(args.output_dir, f"{dataset_name_clean}", f"{model_name_clean}")
     
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
     logger.info(f"Loading model: {args.model_name}")
     model = AutoModel.from_pretrained(args.model_name, trust_remote_code=True)
@@ -86,7 +90,7 @@ def main():
         model,
         tokenizer,
         args.data_path,
-        args.output_dir,
+        output_dir,
         max_length=args.max_length,
         batch_size=args.batch_size
     )

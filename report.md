@@ -13,13 +13,13 @@ I also considered additional datasets for more examples of formal and informal s
 
 ## Model Background
 
-For selecting models suitable for formality detection, I used the MTEB (Massive Text Embedding Benchmark) [paper](https://arxiv.org/abs/2210.07316). This benchmark helps evaluate and compare various embedding models in natural language processing tasks. More details can be found on the MTEB leaderboard: [https://huggingface.co/spaces/mteb/leaderboard](https://huggingface.co/spaces/mteb/leaderboard). I chose the five best-performing models from the leaderboard, specifically those with fewer than 1 billion parameters to ensure a balance between high performance and computational efficiency. The top five models are:
+For selecting models suitable for formality detection, I used the MTEB (Massive Text Embedding Benchmark) [paper](https://arxiv.org/abs/2210.07316). This benchmark helps evaluate and compare various embedding models in natural language processing tasks. More details can be found on the MTEB leaderboard: [https://huggingface.co/spaces/mteb/leaderboard](https://huggingface.co/spaces/mteb/leaderboard). I chose the five best-performing models from the leaderboard, specifically those with fewer than 1 billion parameters to ensure a balance between high performance and computational efficiency. The top three models are:
 
 - **dunzhang/stella_en_400M_v5**
-- **jinaai/jina-embeddings-v3**
 - **Alibaba-NLP/gte-large-en-v1.5**
-- **jxm/cde-small-v1**
 - **HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1**
+
+also I took **distilbert-base-uncased** as a very base model
 
 In addition to these models, I also evaluated performance using zero-shot prompting (https://huggingface.co/tasks/zero-shot-classification). This method uses pre-trained language models to classify text without further task-specific training, offering another way to measure how well a model understands formality. For this approach, the **OpenAI API** is used.
 
@@ -33,9 +33,6 @@ To evaluate the models effectively, I selected several widely used metrics in na
 
 These metrics are popular in NLP because they provide a clear and comprehensive view of model performance in classification tasks.
 
-## Fine-Tuning
-
-Fine-tuning pre-trained language models on the specific task of formality detection can further improve performance. For example, I experimented with fine-tuning **DistilBERT** on our dataset. However, this approach is not limited to DistilBERT; any pre-trained model can be fine-tuned for this task.
 
 ## Additional Ideas
 
@@ -53,3 +50,7 @@ Based on my extensive research, here are some data-focused ideas to further enha
 - **Addressing Domain Gaps**  
   The current setup includes data from emails and Reddit, which come from very different domains. This large domain gap may hurt model performance. A careful selection or further domain adaptation might be needed to reduce these differences.
 
+## What went wrong
+
+- **jinaai/jina-embeddings-v3**
+- **jxm/cde-small-v1**
