@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 from transformers import AutoConfig, AutoTokenizer, AdamW
 from transformers.optimization import get_linear_schedule_with_warmup
@@ -120,7 +121,14 @@ def train(args, model, train_dataset, val_dataset, test_dataset):
     
     logger.info(f"Test metrics: {test_metrics}")
     
-    with open(os.path.join(args.output_dir, "results.txt"), "w") as f:
+    model_name_clean = os.path.basename(args.model_name)
+    dataset_name_clean = os.path.splitext(os.path.basename(args.data_dir))[0]
+    output_dir = os.path.join(args.output_dir, f"{dataset_name_clean}", f"{model_name_clean}")
+    
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    with open(os.path.join(output_dir, "finetune_results.txt"), "w") as f:
         f.write(f"Test accuracy: {test_metrics['accuracy']:.4f}\n")
         f.write(f"Test precision: {test_metrics['precision']:.4f}\n")
         f.write(f"Test recall: {test_metrics['recall']:.4f}\n")
@@ -129,47 +137,38 @@ def train(args, model, train_dataset, val_dataset, test_dataset):
             f.write(f"Test AUC: {test_metrics['auc']:.4f}\n")
     
     if args.save_model:
-        logger.info(f"Saving model to {args.output_dir}")
-        model.save_pretrained(args.output_dir)
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-        tokenizer.save_pretrained(args.output_dir)
+        logger.info(f"Saving model to {output_dir}")
+        model.save_pretrained(output_dir)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer.save_pretrained(output_dir)
     
     return test_metrics
 
 def load_data(args):
-    """Load and prepare data for binary classification"""
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     
-    train_texts, train_labels = [], []
-    val_texts, val_labels = [], []
-    test_texts, test_labels = [], []
+    texts, labels = [], []
     
-    with open(os.path.join(args.data_dir, "train.txt"), "r") as f:
+    with open(args.data_dir, "r") as f:
         for line in f:
             parts = line.strip().split("\t")
             if len(parts) >= 2:
-                train_texts.append(parts[0])
-                train_labels.append(int(parts[1]))
+                texts.append(parts[0])
+                labels.append(int(parts[1]))
     
-    with open(os.path.join(args.data_dir, "val.txt"), "r") as f:
-        for line in f:
-            parts = line.strip().split("\t")
-            if len(parts) >= 2:
-                val_texts.append(parts[0])
-                val_labels.append(int(parts[1]))
-    
-    with open(os.path.join(args.data_dir, "test.txt"), "r") as f:
-        for line in f:
-            parts = line.strip().split("\t")
-            if len(parts) >= 2:
-                test_texts.append(parts[0])
-                test_labels.append(int(parts[1]))
+    train_texts, temp_texts, train_labels, temp_labels = train_test_split(
+        texts, labels, test_size=0.4, random_state=42, stratify=labels
+    )
+    val_texts, test_texts, val_labels, test_labels = train_test_split(
+        temp_texts, temp_labels, test_size=0.5, random_state=42, stratify=temp_labels
+    )
     
     train_dataset = prepare_binary_classification_data(train_texts, train_labels, tokenizer, args.max_length)
     val_dataset = prepare_binary_classification_data(val_texts, val_labels, tokenizer, args.max_length)
     test_dataset = prepare_binary_classification_data(test_texts, test_labels, tokenizer, args.max_length)
     
     return train_dataset, val_dataset, test_dataset
+
 
 def main():
     parser = argparse.ArgumentParser()
