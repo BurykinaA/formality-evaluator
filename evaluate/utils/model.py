@@ -1,62 +1,11 @@
-import random
-
-import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.nn import MultiheadAttention
-from transformers import AutoTokenizer
 
-from transformers import BertModel, BertPreTrainedModel, DistilBertPreTrainedModel, DistilBertModel
 #hf models
 from transformers import AutoModel, PreTrainedModel
 
 from transformers.modeling_outputs import BaseModelOutputWithPooling
 
-
-class DistilBertForSequenceClassification(DistilBertPreTrainedModel):
-    def __init__(self, config, weights, pooling="average"):
-        super().__init__(config)
-        self.num_labels = config.num_labels
-        self.weights = weights
-        self.pooling = pooling
-
-        self.distilbert = DistilBertModel(config)
-        self.dropout = nn.Dropout(0.1)
-        self.classifier = nn.Linear(config.hidden_size, self.num_labels)
-
-        self.init_weights()
-
-    def forward(self,
-                input_ids=None,
-                attention_mask=None,
-                labels=None):
-        outputs = self.distilbert(input_ids,
-                            attention_mask=attention_mask)
-
-        if self.pooling == "average":
-            attention_mask = attention_mask.unsqueeze(-1)
-            pooled_output = torch.sum(outputs[0]*attention_mask, dim=1) / torch.sum(attention_mask, dim=1)
-        elif self.pooling == "cls_nopool":
-            pooled_output = outputs[0][:, 0, :]
-        elif self.pooling == "cls":
-            pooled_output = outputs[1]
-        else:
-            raise ValueError("Choose args.pooling from ['cls', 'cls_nopool', 'average']")
-
-        pooled_output = self.dropout(pooled_output)
-        seq_logits = self.classifier(pooled_output)
-
-        outputs = (seq_logits,) + outputs[2:]  # add hidden states and attention if they are here
-        if labels is not None:
-            # calculate sequence classification loss
-            seq_loss_fct = nn.CrossEntropyLoss().cuda()
-            loss = seq_loss_fct(seq_logits, labels)
-
-            outputs = (loss,) + outputs
-
-        return outputs
-    
 
 class GeneralModelForSequenceClassification(PreTrainedModel):
     def __init__(self, config, model_name, weights, pooling="average", train_dataset=None):

@@ -1,17 +1,12 @@
 import os
 import argparse
-import json
-import time
-import pickle
-from tqdm import tqdm, trange
+from tqdm import tqdm
 import numpy as np
-from sklearn.preprocessing import normalize
 
 from transformers import AutoModel, AutoTokenizer
 
 import torch
 from torch.utils.data import DataLoader, SequentialSampler
-
 
 
 class TextDataset(torch.utils.data.Dataset):
@@ -27,21 +22,6 @@ class TextDataset(torch.utils.data.Dataset):
 
 
 def calculate_embedding(texts, model, tokenizer, device='cuda', batch_size=32, max_length=128, verbose=False):
-    """
-    Calculate embeddings for text using a pre-trained model.
-    
-    Args:
-        texts: List of text strings
-        model: Pre-trained model
-        tokenizer: Tokenizer for the model
-        device: Device to run the model on
-        batch_size: Batch size for processing
-        max_length: Maximum sequence length
-        verbose: Whether to show progress bar
-    
-    Returns:
-        numpy array of embeddings
-    """
 
     model.to(device)
     
@@ -68,12 +48,8 @@ def calculate_embedding(texts, model, tokenizer, device='cuda', batch_size=32, m
             if hasattr(outputs, 'pooler_output') and outputs.pooler_output is not None:
                 embeddings = outputs.pooler_output
             else:
-                #embeddings = outputs.last_hidden_state[:, 0, :]
                 embeddings = (outputs.last_hidden_state * attention_mask.unsqueeze(-1)).sum(1) / attention_mask.sum(1, keepdim=True)
 
-
-            # print(embeddings)
-            
             all_embeddings.append(embeddings.cpu().numpy())
     
     return np.vstack(all_embeddings)

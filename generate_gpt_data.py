@@ -1,19 +1,9 @@
 import os
 import openai
-import time
 import random
 from tqdm import tqdm
 
 def generate_examples(num_examples=500):
-    """
-    Generates examples of formal and informal speech using OpenAI API.
-    
-    Args:
-        num_examples: Number of examples of each type to generate
-    
-    Returns:
-        Two lists: formal and informal texts
-    """
     formal_texts = []
     informal_texts = []
     
@@ -76,14 +66,6 @@ def generate_examples(num_examples=500):
     return formal_texts, informal_texts
 
 def save_to_file(formal_texts, informal_texts, output_file):
-    """
-    Saves generated texts to a file in a format similar to gyafc_generate.py
-    
-    Args:
-        formal_texts: List of formal texts
-        informal_texts: List of informal texts
-        output_file: Path to output file
-    """
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     
     with open(output_file, "w", encoding="utf-8") as f:

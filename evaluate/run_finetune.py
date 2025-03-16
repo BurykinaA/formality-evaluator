@@ -5,9 +5,7 @@ import os
 import random
 import numpy as np
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
-from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 from transformers import AutoConfig, AutoTokenizer, AdamW
@@ -139,7 +137,7 @@ def train(args, model, train_dataset, val_dataset, test_dataset):
     if args.save_model:
         logger.info(f"Saving model to {output_dir}")
         model.save_pretrained(output_dir)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name)
         tokenizer.save_pretrained(output_dir)
     
     return test_metrics
