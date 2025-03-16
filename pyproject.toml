@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "formality-evaluator"
+version = "0.1.0"
+description = ""
+authors = ["alina <alina4268@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+datasets = "^3.4.0"
+openai = "^1.66.3"
+torch = "^2.6.0"
+transformers = "^4.49.0"
+scikit-learn = "^1.6.1"
+einops = "^0.8.1"
+xformers = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
