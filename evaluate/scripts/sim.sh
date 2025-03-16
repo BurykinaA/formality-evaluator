@@ -5,9 +5,9 @@
 # HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1] +
 
 # Choose one of the following datasets:
-# [gyafc, wikipedia_reddit, openai]
+# [gyafc, reddit_enron_combined, gpt_generated]
 
-MODEL_NAME="distilbert-base-uncased" 
+MODEL_NAME="dunzhang/stella_en_400M_v5" 
 DATA_PATH="data/gyafc.txt"  # Change to your data file
 OUTPUT_DIR="results/similarity"  # Change to your output directory
 

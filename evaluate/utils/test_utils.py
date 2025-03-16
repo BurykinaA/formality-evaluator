@@ -71,7 +71,7 @@ def evaluate_similarity(embeddings1, embeddings2, labels, threshold=0.5):
     binary_preds = (similarities >= threshold).astype(int)
     #print(binary_preds)
     
-    metrics = evaluate_binary_classification(similarities, labels, threshold)
+    metrics = evaluate_binary_classification((similarities + 1) / 2, labels, threshold = np.median(similarities))
     
     return metrics
 
