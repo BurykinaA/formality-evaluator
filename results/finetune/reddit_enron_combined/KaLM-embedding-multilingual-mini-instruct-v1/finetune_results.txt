@@ -1,0 +1,5 @@
+Test accuracy: 0.9975
+Test precision: 0.9979
+Test recall: 0.9972
+Test F1: 0.9975
+Test AUC: 1.0000

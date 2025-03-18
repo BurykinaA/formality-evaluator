@@ -80,11 +80,11 @@ Note: all results are located in the `results` folder.
 
 ### finetune
 
-| Model                      | gpt_generated | gyafc | reddit_enron_combined |
+| Model                      | gpt_generated | gyafc | reddit_enron_combined (F1-score) |
 |----------------------------|--------------|-------|------------------------|
-| gte-large-en-v1.5          |       1.0       |   0.9131    | in progress                       |
-| KaLM-embedding-multilingual |      1.0    |   0.7234    | in progress                       |
-| stella_en_400M_v5          |      1.0      |   0.8787   | in progress                     |
+| gte-large-en-v1.5          |       1.0       |   0.9131    | 0.9973                       |
+| KaLM-embedding-multilingual |      1.0    |   0.7234    | 0.9975                       |
+| stella_en_400M_v5          |      1.0      |   0.8787   | 0.9981                     |
 | distilbert-base-uncased    | in progress  | 0.8864 |  in progress                      |
 
 ### similarity
